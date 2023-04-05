@@ -1,7 +1,18 @@
 import telebot
 from random import randint
+from telebot import types
 
 bot = telebot.TeleBot('6097683861:AAGo4dADxVeYlrHelXe6s60p3TrxVN8BKQU')
+
+
+@bot.message_handler(commands=['games'])
+def games(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+    button1 = types.KeyboardButton('1 игра')
+    button2 = types.KeyboardButton('2 игра')
+    button3 = types.KeyboardButton('3 игра')
+    markup.add(button1, button2, button3)
+    bot.send_message(message.chat.id, 'Вот, как ты и просил', reply_markup=markup)
 
 
 @bot.message_handler(commands=['start'])
@@ -14,6 +25,7 @@ def start(message):
 def help(message):
     mess = "Вот что я могу:\n" \
            "/start - начало\n" \
+           "/games - вывести 3 кнопки\n" \
            "отвечать на ваши вопросы"
     bot.send_message(message.chat.id, mess, parse_mode='html')
 
@@ -24,6 +36,18 @@ def answers(message):
     if message.text == 'Привет' or message.text == 'привет' or message.text == 'Прив' or message.text == 'прив' \
             or message.text == 'Hi' or message.text == 'hi' or message.text == 'Hi!' or message.text == 'hi!':
         bot.send_message(message.chat.id, 'Привет', parse_mode='html')
+    elif message.text == '1 игра':
+        markup = types.InlineKeyboardMarkup(row_width=1)
+        markup.add(types.InlineKeyboardButton("Перейти к игре 1", url="https://itproget.com"))
+        bot.send_message(message.chat.id, 'Правила к игре 1:', reply_markup=markup)
+    elif message.text == '2 игра':
+        markup = types.InlineKeyboardMarkup(row_width=1)
+        markup.add(types.InlineKeyboardButton("Перейти к игре 2", url="https://itproget.com"))
+        bot.send_message(message.chat.id, 'Правила к игре 2:', reply_markup=markup)
+    elif message.text == '3 игра':
+        markup = types.InlineKeyboardMarkup(row_width=1)
+        markup.add(types.InlineKeyboardButton("Перейти к игре 3", url="https://itproget.com"))
+        bot.send_message(message.chat.id, 'Правила к игре 3:', reply_markup=markup)
     elif message.text == 'Хорошо' or message.text == 'хорошо':
         bot.send_message(message.chat.id, 'Это хорошо, что хорошо', parse_mode='html')
     elif message.text == 'Как дела?' or message.text == 'как дела?' or message.text == 'Как дела' or message.text == 'как дела' \
@@ -68,11 +92,15 @@ def answers(message):
     elif message.text == 'Ты где?' or message.text == 'ты где?' or message.text == 'Ты где' or message.text == 'ты где':
         a = randint(1, 3)
         if a == 1:
-            bot.send_message(message.chat.id, 'Если брать во внимание тот факт, что ты находишься где-то там, то я с большей вероятностью нахожусь где-то тут', parse_mode='html')
+            bot.send_message(message.chat.id,
+                             'Если брать во внимание тот факт, что ты находишься где-то там, то я с большей вероятностью нахожусь где-то тут',
+                             parse_mode='html')
         elif a == 2:
             bot.send_message(message.chat.id, 'К большому сожалению, не на Мальдивах', parse_mode='html')
         elif a == 3:
-            bot.send_message(message.chat.id, 'В твоей голове, в твоём сердце, в твоих мыслях. В данный момент в голосе, который ты слышишь / в буквах, которые ты читаешь', parse_mode='html')
+            bot.send_message(message.chat.id,
+                             'В твоей голове, в твоём сердце, в твоих мыслях. В данный момент в голосе, который ты слышишь / в буквах, которые ты читаешь',
+                             parse_mode='html')
     elif message.text == 'Сколько тебе лет?' or message.text == 'сколько тебе лет?' or message.text == 'Сколько тебе лет' or message.text == 'сколько тебе лет':
         a = randint(1, 3)
         if a == 1:
