@@ -1,6 +1,8 @@
 import telebot
 from random import randint
 from telebot import types
+from telegram import ReplyKeyboardMarkup
+from telegram.ext import CommandHandler, ConversationHandler, MessageHandler
 
 bot = telebot.TeleBot('6097683861:AAGo4dADxVeYlrHelXe6s60p3TrxVN8BKQU')
 
@@ -20,6 +22,23 @@ def start(message):
     mess = f'Узнайте обо мне больше - /help'
     bot.send_message(message.chat.id, mess, parse_mode='html')
 
+
+@bot.message_handler(commands=['vk'], content_types=['text'])
+def vk(message):
+    vk_ss = ''
+    if vk_ss != '':
+        markup = types.InlineKeyboardMarkup(row_width=1)
+        markup.add(types.InlineKeyboardButton("ВК", url=f"https://vk.com/{vk_ss}"))
+        bot.send_message(message.chat.id, 'Перейти по ссылке на вашу страницу ВК:', reply_markup=markup)
+    else:
+        bot.send_message(message.chat.id, 'У меня нет данных вашей страницы. Вы что, от кого-то скрываетесь?',
+                         parse_mode='html')
+        bot.send_message(message.chat.id, 'Напишите ваш ник в Vk', parse_mode='html')
+        if message.text != '' and message.text != '/vk':
+            vk_ss = message.text
+            markup = types.InlineKeyboardMarkup(row_width=1)
+            markup.add(types.InlineKeyboardButton("ВК", url=f"https://vk.com/{vk_ss}"))
+            bot.send_message(message.chat.id, 'Перейти по ссылке на вашу страницу ВК:', reply_markup=markup)
 
 @bot.message_handler(commands=['help'])
 def help(message):
