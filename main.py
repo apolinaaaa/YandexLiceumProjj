@@ -4,7 +4,7 @@ from telebot import types
 import sqlite3
 
 karma = 0
-krna1 = None
+a = 90
 
 name = None
 bot = telebot.TeleBot('6097683861:AAGo4dADxVeYlrHelXe6s60p3TrxVN8BKQU')
