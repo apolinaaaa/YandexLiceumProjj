@@ -129,7 +129,7 @@ def answers(message):
             or message.text == 'пжлст' or message.text == 'пж' or message.text == 'пожалуйста' or message.text == 'Плиз' or message.text == 'плиз':
         karma += 1
         bot.send_message(message.chat.id, f'Твоя карма: {karma}', parse_mode='html')
-    elif message.text == ' фу' or message.text == 'Фу' or message.text == ' бе' or message.text == 'Бе' or message.text == 'дурак':
+    elif message.text == 'фу' or message.text == 'Фу' or message.text == 'бе' or message.text == 'Бе' or message.text == 'дурак' or message.text == 'Биомусор' or message.text == 'биомусор':
         karma -= 1
         bot.send_message(message.chat.id, f'Твоя карма: {karma}', parse_mode='html')
     elif message.text == '1 игра':
