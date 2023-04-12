@@ -3,7 +3,7 @@ from random import randint
 from telebot import types
 import sqlite3
 
-karma = None
+karma = 0
 krna1 = None
 
 name = None
@@ -125,8 +125,12 @@ def answers(message):
     if message.text == 'Привет' or message.text == 'привет' or message.text == 'Прив' or message.text == 'прив' \
             or message.text == 'Hi' or message.text == 'hi' or message.text == 'Hi!' or message.text == 'hi!':
         bot.send_message(message.chat.id, 'Привет', parse_mode='html')
-    elif 'Спасибо' or 'спс' or 'спасибо' or 'Пожалуйста' or 'пжлст' or 'пж' or 'пожалуйста' or 'Плиз' or 'плиз' in  message.text:
+    elif message.text == 'Спасибо' or message.text == 'спс' or message.text == 'спасибо' or message.text == 'Пожалуйста'\
+            or message.text == 'пжлст' or message.text == 'пж' or message.text == 'пожалуйста' or message.text == 'Плиз' or message.text == 'плиз':
         karma += 1
+        bot.send_message(message.chat.id, f'Твоя карма: {karma}', parse_mode='html')
+    elif message.text == ' фу' or message.text == 'Фу' or message.text == ' бе' or message.text == 'Бе' or message.text == 'дурак':
+        karma -= 1
         bot.send_message(message.chat.id, f'Твоя карма: {karma}', parse_mode='html')
     elif message.text == '1 игра':
         markup = types.InlineKeyboardMarkup(row_width=1)
