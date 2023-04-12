@@ -1,10 +1,47 @@
 import telebot
 from random import randint
 from telebot import types
-from telegram import ReplyKeyboardMarkup
-from telegram.ext import CommandHandler, ConversationHandler, MessageHandler
+import sqlite3
 
+name = None
 bot = telebot.TeleBot('6097683861:AAGo4dADxVeYlrHelXe6s60p3TrxVN8BKQU')
+
+
+@bot.message_handler(commands=['vk'])
+def vk(message):
+    vk_ss = ''
+    if vk_ss != '':
+        markup = types.InlineKeyboardMarkup(row_width=1)
+        markup.add(types.InlineKeyboardButton("ВК", url=f"https://vk.com/{vk_ss}"))
+        bot.send_message(message.chat.id, 'Перейти по ссылке на вашу страницу ВК:', reply_markup=markup)
+    else:
+        bot.send_message(message.chat.id, 'У меня нет данных вашей страницы. Вы что, от кого-то скрываетесь?',
+                         parse_mode='html')
+        bot.send_message(message.chat.id, 'Напишите ваш ник в Vk', parse_mode='html')
+        bot.register_next_step_handler(message, vk_1)
+
+
+def vk_1(message):
+    if message.text != '' and message.text != '/vk':
+        vk_ss = message.text
+        markup = types.InlineKeyboardMarkup(row_width=1)
+        markup.add(types.InlineKeyboardButton("ВК", url=f"https://vk.com/{vk_ss}"))
+        bot.send_message(message.chat.id, 'Перейти по ссылке на вашу страницу ВК:', reply_markup=markup)
+
+
+@bot.message_handler(content_types=['photo'])
+def photo(message):
+    bot.reply_to(message, 'Вау, классное фото')
+
+
+@bot.message_handler(content_types=['video'])
+def photo(message):
+    bot.reply_to(message, 'Вау, классное видео')
+
+
+@bot.message_handler(content_types=['audio'])
+def photo(message):
+    bot.reply_to(message, 'Вау')
 
 
 @bot.message_handler(commands=['games'])
@@ -21,24 +58,38 @@ def games(message):
 def start(message):
     mess = f'Узнайте обо мне больше - /help'
     bot.send_message(message.chat.id, mess, parse_mode='html')
+    conn = sqlite3.connect('basadanneh.sql')
+    cur = conn.cursor()
+    cur.execute(
+        'CREATE TABLE IF NOT EXISTS users (id int auto_increment primary key, name varchar(50), password varchar(50))')
+    conn.commit()
+    cur.close()
+    conn.close()
+    bot.send_message(message.chat.id, 'Введите ваше имя', parse_mode='html')
+    bot.register_next_step_handler(message, username)
 
 
-@bot.message_handler(commands=['vk'], content_types=['text'])
-def vk(message):
-    vk_ss = ''
-    if vk_ss != '':
-        markup = types.InlineKeyboardMarkup(row_width=1)
-        markup.add(types.InlineKeyboardButton("ВК", url=f"https://vk.com/{vk_ss}"))
-        bot.send_message(message.chat.id, 'Перейти по ссылке на вашу страницу ВК:', reply_markup=markup)
-    else:
-        bot.send_message(message.chat.id, 'У меня нет данных вашей страницы. Вы что, от кого-то скрываетесь?',
-                         parse_mode='html')
-        bot.send_message(message.chat.id, 'Напишите ваш ник в Vk', parse_mode='html')
-        if message.text != '' and message.text != '/vk':
-            vk_ss = message.text
-            markup = types.InlineKeyboardMarkup(row_width=1)
-            markup.add(types.InlineKeyboardButton("ВК", url=f"https://vk.com/{vk_ss}"))
-            bot.send_message(message.chat.id, 'Перейти по ссылке на вашу страницу ВК:', reply_markup=markup)
+def username(message):
+    global name
+    name = message.text.strip()
+    bot.send_message(message.chat.id, 'Введите пароль', parse_mode='html')
+    bot.register_next_step_handler(message, userpassword)
+
+
+def userpassword(message):
+    password = message.text.strip()
+    conn = sqlite3.connect('basadanneh.sql')
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO users (name, password) VALUES ('%s', '%s')" % (name, password))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    markup = telebot.types.InlineKeyboardMarkup()
+    markup.add(types.InlineKeyboardButton('список пользователей', callback_data='users'))
+    bot.send_message(message.chat.id, 'пользователь зареган', reply_markup=markup)
+
 
 @bot.message_handler(commands=['help'])
 def help(message):
@@ -49,6 +100,21 @@ def help(message):
     bot.send_message(message.chat.id, mess, parse_mode='html')
 
 
+@bot.callback_query_handler(func=lambda call: True)
+def callback(call):
+    conn = sqlite3.connect('basadanneh.sql')
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT * FROM users")
+    users = cur.fetchall()
+    info = ''
+    for el in users:
+        info += f'Имя: {el[1]}, пароль: {el[2]}\n'
+    cur.close()
+    conn.close()
+    bot.send_message(call.message.chat.id, info)
+
+
 @bot.message_handler(content_types=['text'])
 def answers(message):
     a = 0
@@ -57,15 +123,16 @@ def answers(message):
         bot.send_message(message.chat.id, 'Привет', parse_mode='html')
     elif message.text == '1 игра':
         markup = types.InlineKeyboardMarkup(row_width=1)
-        markup.add(types.InlineKeyboardButton("Перейти к игре 1", url="https://itproget.com"))
+        markup.add(types.InlineKeyboardButton("Перейти к игре 1",
+                                              url="http://127.0.0.1:8080/game1"))
         bot.send_message(message.chat.id, 'Правила к игре 1:', reply_markup=markup)
     elif message.text == '2 игра':
         markup = types.InlineKeyboardMarkup(row_width=1)
-        markup.add(types.InlineKeyboardButton("Перейти к игре 2", url="https://itproget.com"))
+        markup.add(types.InlineKeyboardButton("Перейти к игре 2", url="http://127.0.0.1:8080/game2"))
         bot.send_message(message.chat.id, 'Правила к игре 2:', reply_markup=markup)
     elif message.text == '3 игра':
         markup = types.InlineKeyboardMarkup(row_width=1)
-        markup.add(types.InlineKeyboardButton("Перейти к игре 3", url="https://itproget.com"))
+        markup.add(types.InlineKeyboardButton("Перейти к игре 3", url="http://127.0.0.1:8080/game3"))
         bot.send_message(message.chat.id, 'Правила к игре 3:', reply_markup=markup)
     elif message.text == 'Хорошо' or message.text == 'хорошо':
         bot.send_message(message.chat.id, 'Это хорошо, что хорошо', parse_mode='html')
@@ -128,8 +195,6 @@ def answers(message):
             bot.send_message(message.chat.id, 'Я не имею права разглашать государственные тайны', parse_mode='html')
         elif a == 3:
             bot.send_message(message.chat.id, 'Мне 100 по эльфийскому времени', parse_mode='html')
-    else:
-        bot.send_message(message.chat.id, "<b>Моя твоя не понимать</b>", parse_mode='html')
 
 
 bot.polling(none_stop=True)
