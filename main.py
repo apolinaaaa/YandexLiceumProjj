@@ -127,7 +127,7 @@ def callback(call):
 def weather(message):
     bot.send_message(message.chat.id, 'Введите ваше имя', parse_mode='html')
     city = message.text.strip().lower()
-    res = requests.get(f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API}')
+    res = requests.get(f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API}&units=metric')
     data = json.loads(res.text)
     bot.reply_to(message, f'сейчас погода: {data["main"]["temp"]}')
 
