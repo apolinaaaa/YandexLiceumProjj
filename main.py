@@ -1,4 +1,6 @@
 import requests
+import random
+
 import telebot
 from random import randint
 from telebot import types
@@ -12,6 +14,8 @@ API = '27cd1f60f8d989dc394183b3ef501809'
 
 name = None
 bot = telebot.TeleBot('6097683861:AAGo4dADxVeYlrHelXe6s60p3TrxVN8BKQU')
+words = ['перпендикуляр', 'Амфитеатр', 'Синоптик', 'Пассатижи', 'Радиатор', 'Крышка', 'Кашпо', 'Абзац', 'Формуляр',\
+         'Вращение', 'Фундамент', 'Казино']
 
 
 @bot.message_handler(commands=['vk'])
@@ -34,6 +38,43 @@ def vk_1(message):
         markup = types.InlineKeyboardMarkup(row_width=1)
         markup.add(types.InlineKeyboardButton("ВК", url=f"https://vk.com/{vk_ss}"))
         bot.send_message(message.chat.id, 'Перейти по ссылке на вашу страницу ВК:', reply_markup=markup)
+
+
+@bot.message_handler(commands=['hangman'])
+def hangman(message):
+    word = random.choice(words)
+    guesses = []
+    bot.send_message(message.chat.id, 'Правила игры: я загадываю слово. Количество букв в нём равняетсяя количеству нижних подчеркиваний. \
+    Ваша задача угадать слово и не повесить человечка. Его судьба в ваших руках:)')
+    #under = '_ ' * (len(word))
+    #bot.send_message(message.chat.id, under)
+    mes = message.text.strip().lower()
+    guesses = 'ауоыиэяюёе'
+    turns = 5
+    while turns > 0:
+        missed = 0
+        for letter in word:
+            if letter in guesses:
+                bot.send_message(message.chat.id, f'{letter}')
+            else:
+                bot.send_message(message.chat.id, '_')
+                missed += 1
+        if missed == 0:
+            print('\nТы выиграл!')
+            break
+        guess = message.text
+        guesses += guess
+        if guess not in word:
+            turns -= 1
+            bot.send_message(message.chat.id, 'Не угадал.')
+            bot.send_message(message.chat.id,  f'Осталось попыток: {turns}')
+            if turns < 5: bot.send_message(message.chat.id, '\n | ')
+            if turns < 4: bot.send_message(message.chat.id, ' O ')
+            if turns < 3: bot.send_message(message.chat.id, ' /|\ ')
+            if turns < 2: bot.send_message(message.chat.id, ' | ')
+            if turns < 1: bot.send_message(message.chat.id, ' / \ ')
+            if turns == 0: bot.send_message(message.chat.id, f'\n\nЭто слово: {word}')
+
 
 
 @bot.message_handler(content_types=['photo'])
@@ -59,6 +100,7 @@ def games(message):
     button3 = types.KeyboardButton('3 игра')
     markup.add(button1, button2, button3)
     bot.send_message(message.chat.id, 'Вот, как ты и просил', reply_markup=markup)
+
 
 
 @bot.message_handler(commands=['start'])
