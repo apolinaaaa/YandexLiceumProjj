@@ -1,10 +1,14 @@
+import requests
 import telebot
 from random import randint
 from telebot import types
 import sqlite3
+import json
 
 karma = 0
 a = 90
+
+API = '27cd1f60f8d989dc394183b3ef501809'
 
 name = None
 bot = telebot.TeleBot('6097683861:AAGo4dADxVeYlrHelXe6s60p3TrxVN8BKQU')
@@ -116,6 +120,19 @@ def callback(call):
     cur.close()
     conn.close()
     bot.send_message(call.message.chat.id, info)
+
+
+
+@bot.message_handler(commands=['city'])
+def weather(message):
+    bot.send_message(message.chat.id, 'Введите ваше имя', parse_mode='html')
+    city = message.text.strip().lower()
+    res = requests.get(f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API}')
+    data = json.loads(res.text)
+    bot.reply_to(message, f'сейчас погода: {data["main"]["temp"]}')
+
+
+
 
 
 @bot.message_handler(content_types=['text'])
