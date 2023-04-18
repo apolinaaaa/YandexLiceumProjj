@@ -12,7 +12,7 @@ a = 90
 
 name = None
 bot = telebot.TeleBot('6097683861:AAGo4dADxVeYlrHelXe6s60p3TrxVN8BKQU')
-words = ['перпендикуляр', 'Амфитеатр', 'Синоптик', 'Пассатижи', 'Радиатор', 'Крышка', 'Кашпо', 'Абзац', 'Формуляр',\
+words = ['перпендикуляр', 'Амфитеатр', 'Синоптик', 'Пассатижи', 'Радиатор', 'Крышка', 'Кашпо', 'Абзац', 'Формуляр', \
          'Вращение', 'Фундамент', 'Казино']
 
 
@@ -38,14 +38,48 @@ def vk_1(message):
         bot.send_message(message.chat.id, 'Перейти по ссылке на вашу страницу ВК:', reply_markup=markup)
 
 
+@bot.message_handler(commands=['bear'])
+def bear(message):
+    bot.send_message(message.chat.id, "Теперь за тобой наблюдает медведь! Тшшшшш...Не делай резких движений!")
+    bot.send_message(message.chat.id, ". . . . . . . . ._. ,-'``;")
+    bot.send_message(message.chat.id, ". . . . . . . . . .,`. . .`-----'..")
+    bot.send_message(message.chat.id, ". . . . . . . . . .,. . . . . .~ .`- .")
+    bot.send_message(message.chat.id, ". . . . . . . . . ,'. . . . . . . .o. .o__")
+    bot.send_message(message.chat.id, ". . . . . . . . _l. . . . . . . . . . . . (#)")
+    bot.send_message(message.chat.id, ". . . . . . . _. '`~-.. . . . . . . . . .,'")
+    bot.send_message(message.chat.id, ". . . . . . .,. .,.-~-.' -.,. . . ..'--~`")
+    bot.send_message(message.chat.id, ". . . . . . /. ./. . . . .}. .` -..,/")
+    bot.send_message(message.chat.id, ". . . . . /. ,'___. . :/. . . . . .")
+    bot.send_message(message.chat.id, ". . . . /'`-.l. . . `'-..'........ . .")
+    bot.send_message(message.chat.id, ". . . ;. . . . . . . . . . . . .)-.....l")
+    bot.send_message(message.chat.id, ". . .l. . . . .' —-........-'. . . ,'")
+    bot.send_message(message.chat.id, ". . .',. . ,....... . . . . . . . . .,'")
+    bot.send_message(message.chat.id, ". . . .' ,/. . . . `,. . . . . . . ,'")
+    bot.send_message(message.chat.id, ". . . . .. . . . . .. . . .,.- '")
+    bot.send_message(message.chat.id, ". . . . . ',. . . . . ',-~'`. ;")
+    bot.send_message(message.chat.id, ". . . . . .l. . . . . ;. . . /__")
+    bot.send_message(message.chat.id, ". . . . . /. . . . . /__. . . . .)")
+    bot.send_message(message.chat.id, ". . . . . '-.. . . . . . .)")
+
+
+@bot.message_handler(commands=['beer'])
+def beer(message):
+    bot.send_message(message.chat.id, '''... |"""""""""""""""""| |\ ''')
+    bot.send_message(message.chat.id, "... |Холодное пиво! ||""\__,_")
+    bot.send_message(message.chat.id, "... |_____________ |||_|__|_ )")
+    bot.send_message(message.chat.id, '... *(@)|(@)"""*******(@)"')
+    bot.send_message(message.chat.id, "______________________________")
+    bot.send_message(message.chat.id, "Упс...Надеемся, что вам есть 18")
+
+
 @bot.message_handler(commands=['hangman'])
 def hangman(message):
     word = random.choice(words)
     guesses = []
     bot.send_message(message.chat.id, 'Правила игры: я загадываю слово. Количество букв в нём равняетсяя количеству нижних подчеркиваний. \
     Ваша задача угадать слово и не повесить человечка. Его судьба в ваших руках:)')
-    #under = '_ ' * (len(word))
-    #bot.send_message(message.chat.id, under)
+    # under = '_ ' * (len(word))
+    # bot.send_message(message.chat.id, under)
     mes = message.text.strip().lower()
     guesses = 'ауоыиэяюёе'
     turns = 5
@@ -65,14 +99,13 @@ def hangman(message):
         if guess not in word:
             turns -= 1
             bot.send_message(message.chat.id, 'Не угадал.')
-            bot.send_message(message.chat.id,  f'Осталось попыток: {turns}')
+            bot.send_message(message.chat.id, f'Осталось попыток: {turns}')
             if turns < 5: bot.send_message(message.chat.id, '\n | ')
             if turns < 4: bot.send_message(message.chat.id, ' O ')
             if turns < 3: bot.send_message(message.chat.id, ' /|\ ')
             if turns < 2: bot.send_message(message.chat.id, ' | ')
             if turns < 1: bot.send_message(message.chat.id, ' / \ ')
             if turns == 0: bot.send_message(message.chat.id, f'\n\nЭто слово: {word}')
-
 
 
 @bot.message_handler(content_types=['photo'])
@@ -98,7 +131,6 @@ def games(message):
     button3 = types.KeyboardButton('3 игра')
     markup.add(button1, button2, button3)
     bot.send_message(message.chat.id, 'Вот, как ты и просил', reply_markup=markup)
-
 
 
 @bot.message_handler(commands=['start'])
@@ -162,7 +194,6 @@ def callback(call):
     bot.send_message(call.message.chat.id, info)
 
 
-
 @bot.message_handler(content_types=['text'])
 def answers(message):
     global karma
@@ -170,17 +201,19 @@ def answers(message):
     if message.text == 'Привет' or message.text == 'привет' or message.text == 'Прив' or message.text == 'прив' \
             or message.text == 'Hi' or message.text == 'hi' or message.text == 'Hi!' or message.text == 'hi!':
         bot.send_message(message.chat.id, 'Привет', parse_mode='html')
-    elif message.text == 'Спасибо' or message.text == 'спс' or message.text == 'спасибо' or message.text == 'Пожалуйста'\
-            or message.text == 'пжлст' or message.text == 'пж' or message.text == 'пожалуйста' or message.text == 'Плиз' or message.text == 'плиз':
+    elif message.text == 'Спасибо' or message.text == 'спс' or message.text == 'спасибо' or message.text == 'Пожалуйста' \
+            or message.text == '+' or message.text == 'пж' or message.text == 'пожалуйста' or message.text == 'Плиз' or message.text == 'плиз':
         karma += 1
-        bot.send_message(message.chat.id, f'Твоя карма: {karma}', parse_mode='html')
-    elif message.text == 'фу' or message.text == 'Фу' or message.text == 'бе' or message.text == 'Бе' or message.text == 'дурак' or message.text == 'Биомусор' or message.text == 'биомусор':
+        bot.send_message(message.chat.id, f'Спасибо! Вы повысили рейтинг бота. Теперь он составляет: {karma}',
+                         parse_mode='html')
+    elif message.text == 'фу' or message.text == 'Фу' or message.text == '-' or message.text == 'Бе' or message.text == 'дурак' or message.text == 'Биомусор' or message.text == 'биомусор':
         karma -= 1
-        bot.send_message(message.chat.id, f'Твоя карма: {karma}', parse_mode='html')
+        bot.send_message(message.chat.id, f'О нет...Вы понизили рейтинг бота. Теперь он составляет: {karma}',
+                         parse_mode='html')
     elif message.text == '1 игра':
         markup = types.InlineKeyboardMarkup(row_width=1)
         markup.add(types.InlineKeyboardButton("Перейти к игре 1",
-                                              url="http://127.0.0.1:8080/game1"))
+                                              url="http://127.0.0.1:8080"))
         bot.send_message(message.chat.id, 'Правила к игре 1:', reply_markup=markup)
     elif message.text == '2 игра':
         markup = types.InlineKeyboardMarkup(row_width=1)

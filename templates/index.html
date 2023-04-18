@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h4>Заметки</h4>
+    {% if current_user.is_authenticated %}
+        <a href="/addnote" class="btn btn-secondary">Add a note</a>
+    {% endif %}
+    <h2 class="text-center">Notes</h2>
+    {% for note in notes %}
+        <div class="row">
+            <div>
+                <h3>Action # {{ note.id }}</h3>
+                {% if current_user.is_authenticated and (current_user == note.user_team_leader or current_user.position == 'capitan') %}
+                    <div>
+                        <a href="/notes/{{ note.id }}" class="btn btn-warning">
+                            Изменить
+                        </a>
+                            <a href="/note_delete/{{ note.id }}" class="btn btn-danger">
+                                Удалить
+                            </a>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                data-bs-target="#deleteModal">
+                            Удалить
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th>Title of activity</th>
+                        <th>Team leader</th>
+                        <th>List of collaborators</th>
+                        <th>Is finished</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ note.note }}</td>
+                        <td>{{ note.user_team_leader.fio }}</td>
+                        <td>{{ note.duration_str }}</td>
+                        <td>{{ note.collaborators }}</td>
+                        {% if note.is_finished %}
+                            <td class="table-success text-black-50">Is finished</td>
+                        {% else %}
+                            <td class="table-warning text-black-50">Is not finished</td>
+                        {% endif %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="deleteModalModal">Удаление</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Вы действительно хотите удалить запись?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+            <button type="button" class="btn btn-primary">Удалить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
