@@ -10,6 +10,8 @@ import json
 karma = 0
 a = 90
 
+not_play = True
+question = ''
 name = None
 bot = telebot.TeleBot('6097683861:AAGo4dADxVeYlrHelXe6s60p3TrxVN8BKQU')
 words = ['перпендикуляр', 'Амфитеатр', 'Синоптик', 'Пассатижи', 'Радиатор', 'Крышка', 'Кашпо', 'Абзац', 'Формуляр', \
@@ -106,6 +108,52 @@ def hangman(message):
             if turns < 2: bot.send_message(message.chat.id, ' | ')
             if turns < 1: bot.send_message(message.chat.id, ' / \ ')
             if turns == 0: bot.send_message(message.chat.id, f'\n\nЭто слово: {word}')
+
+
+@bot.message_handler(commands=['cubes'])
+def cubes(message):
+    you, b = randint(1, 6), randint(1, 6)
+    if b == you:
+        win = 'К сожалению или к счастью, ничья!'
+    elif b > you:
+        win = '''Бот выиграл эту партейку!
+        Может повезёт в следующий раз...'''
+    else:
+        win = 'Вы выиграли! Везунчик!'
+    bot.send_message(message.chat.id, f'''Играем в кости:
+     Вас счёт: {you}
+     Счёт бота: {b}
+     {win}''')
+
+
+@bot.message_handler(commands=['incowords'])
+def start(message):
+    global question, random_word, mixed_word, not_play
+    if not_play:
+        send = bot.send_message(message.chat.id,
+                                'Игра в слова с перемешиванием: я вам дам слово-КАРАКУЛЮ с перемешенными буквами, '
+                                'помоги мне - переставь символы так, чтобы получилось правильное '
+                                'ОСМЫСЛЕННОЕ слово. Удачи с разгадыванием =)')
+        question = (random.choice(words)).lower()
+        random_word = random.sample(question, len(question))
+        mixed_word = ''.join(random_word)
+        bot.send_message(message.chat.id, mixed_word)
+        bot.register_next_step_handler(send, go)
+
+
+def go(message):
+    global not_play
+    if message.text.lower() == question:
+        bot.send_message(message.chat.id, 'ДААА!!! Вам удалось расшифровать КАРАКУЛЮ! Спасибо =)')
+        not_play = True
+    elif not_play:
+        send = bot.send_message(message.chat.id, 'Я верю в вас-попробуйте ещё раз!')
+        bot.send_message(message.chat.id, mixed_word)
+        not_play = False
+        bot.register_next_step_handler(send, go)
+    else:
+        bot.send_message(message.chat.id, 'Увы, но походу вы тоже не разбираетесь  в моих каракулях =(')
+        not_play = True
 
 
 @bot.message_handler(content_types=['photo'])
